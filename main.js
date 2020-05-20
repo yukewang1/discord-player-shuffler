@@ -1,11 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-// .joinQueue
-// .exitQueue
-// .startGame [partySize]
-// .clearQueue
-
 let players = [];
 let partySize = 0;
 
@@ -37,16 +32,26 @@ function rollTheDice(n, ch) {
     // Index from 1
     let team = 1;
 
-    while (players.length > n) {
-        let tempPlayers = players.slice(0, n);
+    while (players.length >= n) {
+        const tempPlayers = players.slice(0, n);
         players.splice(0, n);
 
-        ch.send('Team #${team}: ${tempPlayers}.');
+        ch.send(`Team #${team}: ${tempPlayers}.`);
         team += 1;
     }
 
     if (players.length > 0) {
-        ch.send('Unfortunately, these players are left over: ${players}');
+        ch.send(`Unfortunately, these players are left over: ${players}`);
+    }
+}
+
+
+function displayQueue(ch) {
+    if (players.length > 0) {
+        ch.send(`Players currently in queue: ${players}`);
+    }
+    else {
+        ch.send('No one is currently in queue.');
     }
 }
 
@@ -57,35 +62,40 @@ client.on('ready', () => {
 
 
 client.on('message', message => {
-    const commandList = message.split(' ');
+    const commandList = message.content.split(' ');
 
-    if (commandList.length > 1) {
+    if ((commandList.length > 1) && (commandList[0] == '!roll')) {
         switch (commandList[1]) {
             case 'joinQueue':
                 if (!players.includes(message.author)) {
                     players.push(message.author);
-                    message.channel.send('${message.author} joined the queue.');
-                    message.channel.send('Players currently in queue: ${players}');
+                    message.channel.send(`${message.author} joined the queue.`);
+                    displayQueue(message.channel);
                 }
                 else {
-                    message.channel.send('${message.author} is already in queue.');
+                    message.channel.send(`${message.author} is already in queue.`);
                 }
                 break;
 
             case 'exitQueue':
                 if (players.includes(message.author)) {
                     players.splice(players.indexOf(message.author), 1);
-                    message.channel.send('${message.author} has exited the queue.');
-                    message.channel.send('Players currently in queue: ${players}');
+                    message.channel.send(`${message.author} has exited the queue.`);
+
+                    displayQueue(message.channel);
                 }
                 else {
-                    message.channel.send('${message.author} is not in queue.');
+                    message.channel.send(`${message.author} is not in queue.`);
                 }
                 break;
 
             case 'startGame':
                 if (commandList.length > 2) {
                     partySize = commandList[2];
+                }
+                else {
+                    message.channel.send('Invalid startGame command: to start a game, pass in party size.');
+                    break;
                 }
 
                 if (players.length >= partySize) {
@@ -95,7 +105,7 @@ client.on('message', message => {
                 }
                 else {
                     message.channel.send('Not enough players have joined the queue.');
-                    message.channel.send('Players currently in queue: ${players}');
+                    displayQueue(message.channel);
                 }
 
                 break;
@@ -104,7 +114,21 @@ client.on('message', message => {
                 clearQueue();
                 message.channel.send('The queue is cleared.');
                 break;
+
+            case 'displayQueue':
+                displayQueue(message.channel);
+                break;
+
+            case 'help':
+                message.channel.send('Use *"!roll joinQueue"* to join the queue.');
+                message.channel.send('Use *"!roll exitQueue"* to exit the queue.');
+                message.channel.send('Use *"!roll startGame [partySize]"* to start shuffling.');
+                message.channel.send('Use *"!roll displayQueue"* to display the current queue.');
+                message.channel.send('Use *"!roll clearQueue"* to clear the queue.');
+                break;
        }
     }
 
 });
+
+client.login(process.env.botToken);
