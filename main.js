@@ -29,19 +29,20 @@ function shuffle(inArray) {
 
 function rollTheDice(n, ch) {
     shuffle(players);
-    // Index from 1
-    let team = 1;
+    const teamList = [];
 
     while (players.length >= n) {
         const tempPlayers = players.slice(0, n);
         players.splice(0, n);
-
-        ch.send(`Team #${team}: ${tempPlayers}.`);
-        team += 1;
+        teamList.push(tempPlayers);
     }
 
-    if (players.length > 0) {
-        ch.send(`Unfortunately, these players are left over: ${players}`);
+    while (players.length > 0) {
+        ch.send(`${players[0]}: 爬!`);
+        players.splice(0, 1);
+    }
+    for (let i = 0; i < teamList.length; i++) {
+        ch.send(`Team #${i + 1}: ${teamList[i]}.`);
     }
 }
 
@@ -66,7 +67,7 @@ client.on('message', message => {
 
     if ((commandList.length > 1) && (commandList[0] == '!roll')) {
         switch (commandList[1]) {
-            case 'joinQueue':
+            case 'join':
                 if (!players.includes(message.author)) {
                     players.push(message.author);
                     message.channel.send(`${message.author} joined the queue.`);
@@ -77,7 +78,7 @@ client.on('message', message => {
                 }
                 break;
 
-            case 'exitQueue':
+            case 'exit':
                 if (players.includes(message.author)) {
                     players.splice(players.indexOf(message.author), 1);
                     message.channel.send(`${message.author} has exited the queue.`);
@@ -89,12 +90,19 @@ client.on('message', message => {
                 }
                 break;
 
-            case 'startGame':
+            case 'start':
                 if (commandList.length > 2) {
-                    partySize = commandList[2];
+                    const temp = parseInt(commandList[2]);
+                    if (!isNaN(temp) && temp > 0) {
+                        partySize = commandList[2];
+                    }
+                    else {
+                        message.channel.send('Invalid *party size*: pass in an integer greater than 0.');
+                        break;
+                    }
                 }
                 else {
-                    message.channel.send('Invalid startGame command: to start a game, pass in party size.');
+                    message.channel.send('Invalid *start* command: to start a game, pass in party size.');
                     break;
                 }
 
@@ -120,9 +128,9 @@ client.on('message', message => {
                 break;
 
             case 'help':
-                message.channel.send('Use *"!roll joinQueue"* to join the queue.');
-                message.channel.send('Use *"!roll exitQueue"* to exit the queue.');
-                message.channel.send('Use *"!roll startGame [partySize]"* to start shuffling.');
+                message.channel.send('Use *"!roll join"* to join the queue.');
+                message.channel.send('Use *"!roll exit"* to exit the queue.');
+                message.channel.send('Use *"!roll start [partySize]"* to start shuffling.');
                 message.channel.send('Use *"!roll displayQueue"* to display the current queue.');
                 message.channel.send('Use *"!roll clearQueue"* to clear the queue.');
                 break;
@@ -131,4 +139,4 @@ client.on('message', message => {
 
 });
 
-client.login(process.env.botToken);
+client.login(process.env.BOT_TOKEN);
