@@ -41,6 +41,7 @@ function rollTheDice(n, ch) {
         ch.send(`${players[0]}: 爬!`);
         players.splice(0, 1);
     }
+    
     for (let i = 0; i < teamList.length; i++) {
         ch.send(`Team #${i + 1}: ${teamList[i]}.`);
     }
@@ -49,7 +50,7 @@ function rollTheDice(n, ch) {
 
 function displayQueue(ch) {
     if (players.length > 0) {
-        ch.send(`Players currently in queue: ${players}`);
+        ch.send(`${players.length} players currently in queue: ${players}`);
     }
     else {
         ch.send('No one is currently in queue.');
@@ -128,11 +129,16 @@ client.on('message', message => {
                 break;
 
             case 'help':
-                message.channel.send('Use *"!roll join"* to join the queue.');
-                message.channel.send('Use *"!roll exit"* to exit the queue.');
-                message.channel.send('Use *"!roll start [partySize]"* to start shuffling.');
-                message.channel.send('Use *"!roll displayQueue"* to display the current queue.');
-                message.channel.send('Use *"!roll clearQueue"* to clear the queue.');
+                const helpInfo = new Discord.MessageEmbed()
+                    .setTitle('Available Commands')
+                    .setDescription('Use *"!roll join"* to join the queue.\nUse *"!roll exit"* to exit the queue.\nUse *"!roll start [partySize]"* to start shuffling.\nUse *"!roll displayQueue"* to display the current queue.\nUse *"!roll clearQueue"* to clear the queue.')
+                message.channel.send(helpInfo);
+
+                // message.channel.send('Use *"!roll join"* to join the queue.');
+                // message.channel.send('Use *"!roll exit"* to exit the queue.');
+                // message.channel.send('Use *"!roll start [partySize]"* to start shuffling.');
+                // message.channel.send('Use *"!roll displayQueue"* to display the current queue.');
+                // message.channel.send('Use *"!roll clearQueue"* to clear the queue.');
                 break;
        }
     }
