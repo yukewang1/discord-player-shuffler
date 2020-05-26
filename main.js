@@ -50,13 +50,13 @@ function rollTheDice(n, ch) {
 
 function displayQueue(ch) {
     if (players.length > 1) {
-        ch.send(`${players.length} players currently in queue: ${players}`);
+        ch.send(`${players.length} players currently in the queue: ${players}`);
     }
     else if (players.length == 1) {
-        ch.send(`1 player currently in queue: ${players}`);
+        ch.send(`1 player currently in the queue: ${players}`);
     }
     else {
-        ch.send('No one is currently in queue.');
+        ch.send('No one is currently in the queue.');
     }
 }
 
@@ -117,10 +117,10 @@ client.on('message', message => {
                     for (const n of message.mentions.members.values()) {
                         if (players.includes(n.user)) {
                             players.splice(players.indexOf(n.user), 1);
-                            message.channel.send(`${n.user} has been kicked from the queue.`);
+                            message.channel.send(`${n.user}: 爬!`);
                         }
                         else {
-                            message.channel.send(`${n.user} is not in queue.`);
+                            message.channel.send(`${n.user} is not in the queue.`);
                         }
                     }
 
