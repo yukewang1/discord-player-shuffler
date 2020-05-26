@@ -41,7 +41,7 @@ function rollTheDice(n, ch) {
         ch.send(`${players[0]}: 爬!`);
         players.splice(0, 1);
     }
-    
+
     for (let i = 0; i < teamList.length; i++) {
         ch.send(`Team #${i + 1}: ${teamList[i]}.`);
     }
@@ -49,8 +49,11 @@ function rollTheDice(n, ch) {
 
 
 function displayQueue(ch) {
-    if (players.length > 0) {
+    if (players.length > 1) {
         ch.send(`${players.length} players currently in queue: ${players}`);
+    }
+    else if (players.length == 1) {
+        ch.send(`1 player currently in queue: ${players}`);
     }
     else {
         ch.send('No one is currently in queue.');
@@ -68,7 +71,12 @@ client.on('message', message => {
 
     if ((commandList.length > 1) && (commandList[0] == '!roll')) {
         switch (commandList[1]) {
-            case 'join':
+            case 'hello': {
+                message.channel.send('Hello!');
+                break;
+            }
+
+            case 'join': {
                 if (!players.includes(message.author)) {
                     players.push(message.author);
                     message.channel.send(`${message.author} joined the queue.`);
@@ -78,8 +86,9 @@ client.on('message', message => {
                     message.channel.send(`${message.author} is already in queue.`);
                 }
                 break;
+            }
 
-            case 'exit':
+            case 'exit': {
                 if (players.includes(message.author)) {
                     players.splice(players.indexOf(message.author), 1);
                     message.channel.send(`${message.author} has exited the queue.`);
@@ -90,8 +99,9 @@ client.on('message', message => {
                     message.channel.send(`${message.author} is not in queue.`);
                 }
                 break;
+            }
 
-            case 'start':
+            case 'start': {
                 if (commandList.length > 2) {
                     const temp = parseInt(commandList[2]);
                     if (!isNaN(temp) && temp > 0) {
@@ -118,28 +128,32 @@ client.on('message', message => {
                 }
 
                 break;
+            }
 
-            case 'clearQueue':
+            case 'clearQueue': {
                 clearQueue();
                 message.channel.send('The queue is cleared.');
                 break;
+            }
 
-            case 'displayQueue':
+            case 'displayQueue': {
                 displayQueue(message.channel);
                 break;
+            }
 
-            case 'help':
+            case 'help': {
                 const helpInfo = new Discord.MessageEmbed()
                     .setTitle('Available Commands')
-                    .setDescription('Use *"!roll join"* to join the queue.\nUse *"!roll exit"* to exit the queue.\nUse *"!roll start [partySize]"* to start shuffling.\nUse *"!roll displayQueue"* to display the current queue.\nUse *"!roll clearQueue"* to clear the queue.')
+                    .setDescription('Use *"!roll join"* to join the queue.\nUse *"!roll exit"* to exit the queue.\nUse *"!roll start [partySize]"* to start shuffling.\nUse *"!roll displayQueue"* to display the current queue.\nUse *"!roll clearQueue"* to clear the queue.');
                 message.channel.send(helpInfo);
 
-                // message.channel.send('Use *"!roll join"* to join the queue.');
-                // message.channel.send('Use *"!roll exit"* to exit the queue.');
-                // message.channel.send('Use *"!roll start [partySize]"* to start shuffling.');
-                // message.channel.send('Use *"!roll displayQueue"* to display the current queue.');
-                // message.channel.send('Use *"!roll clearQueue"* to clear the queue.');
                 break;
+            }
+
+            default: {
+                message.channel.send('Invalid !roll command. Use *!roll help* to display available commands.');
+                break;
+            }
        }
     }
 
