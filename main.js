@@ -153,7 +153,7 @@ client.on('message', message => {
                 if (commandList.length > 2) {
                     const temp = parseInt(commandList[2]);
                     if (!isNaN(temp) && temp > 0) {
-                        partySize = commandList[2];
+                        partySize = temp;
                     }
                     else {
                         message.channel.send('Invalid *party size*: pass in an integer greater than 0.');
