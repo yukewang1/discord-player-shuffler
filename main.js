@@ -6,12 +6,15 @@ let partySize = 0;
 
 
 function clearQueue() {
+    // Empties the queue and reset the count
     players = [];
     partySize = 0;
 }
 
 
 function shuffle(inArray) {
+    // Implements the Fisher-Yates shuffle algorithm
+    // Returns a shuffled inArray
     let i = inArray.length, temp, randomIndex;
 
     while (i != 0) {
@@ -28,6 +31,8 @@ function shuffle(inArray) {
 
 
 function rollTheDice(n, ch) {
+    // Helper function to shuffle the players, and prints the
+    // results
     shuffle(players);
     const teamList = [];
 
@@ -38,7 +43,7 @@ function rollTheDice(n, ch) {
     }
 
     while (players.length > 0) {
-        ch.send(`${players[0]}: 爬!`);
+        ch.send(`${players[0]}: go and watch the stream! :)`);
         players.splice(0, 1);
     }
 
@@ -49,6 +54,7 @@ function rollTheDice(n, ch) {
 
 
 function displayQueue(ch) {
+    // Helper function to prints the current players in queue
     if (players.length > 1) {
         ch.send(`${players.length} players currently in the queue: ${players}`);
     }
@@ -62,6 +68,8 @@ function displayQueue(ch) {
 
 
 function joinQueue(person, ch, multi) {
+    // Helper function to add a player to queue, either 
+    // by themselves or by others
     if (!players.includes(person)) {
         players.push(person);
 
@@ -82,7 +90,7 @@ client.on('ready', () => {
     console.log('Bot connected!');
 });
 
-
+// Processes the messages calling the bot with !roll prefix
 client.on('message', message => {
     const commandList = message.content.split(' ');
 
@@ -117,7 +125,7 @@ client.on('message', message => {
                     for (const n of message.mentions.members.values()) {
                         if (players.includes(n.user)) {
                             players.splice(players.indexOf(n.user), 1);
-                            message.channel.send(`${n.user}: 爬!`);
+                            message.channel.send(`${n.user}: removed from queue.`);
                         }
                         else {
                             message.channel.send(`${n.user} is not in the queue.`);
