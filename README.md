@@ -12,6 +12,8 @@ The bot maintains a queue of players trying to play a game.
 - Once all players have joined, an arbitrary player can start the shuffling process, and the bot will select the n-player stack.
 - The left-over players will be prompted as `go and watch the stream! :)`.
 
+**This legacy toy project is no longer actively maintained.**
+
 ## The "How"
 ### To Add the Bot to Your Server
 
